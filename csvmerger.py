@@ -36,5 +36,3 @@ def merge_csv(files_paths: list, merge_file_name="merged", index_keys=["Data"]):
     print("Successfully merged into", merge_file_name)
 
     fullDataframe.to_csv(merge_file_name, index = False, header=True)
-
-merge_csv(files_paths=['teste1.csv', 'teste2.csv'])
