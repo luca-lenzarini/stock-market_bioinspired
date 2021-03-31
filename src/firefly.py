@@ -2,6 +2,9 @@ import random
 import math
 import numpy as np
 
+from evaluation import get_bayesian_rmse 
+from evaluation import bayesian_evaluation
+
 def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_value):
 
     """"
@@ -39,7 +42,7 @@ def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_val
     # Start iterations
     while t < maxGeneration: 
         for i in range(n):
-            Z[i] = rmse(bayesian_evaluation(probabilities, fireflies[i], expected_value), expected_value)
+            Z[i] = get_bayesian_rmse(probabilities, fireflies[i], expected_value)
 
         indice = np.argsort(Z)
         Z.sort()
@@ -80,25 +83,9 @@ def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_val
 
     return bests
 
-def bayesian_evaluation(probabilities, firefly, expected_value):
-
-    prediction = 1
-
-    # calculates the "inside part" of the formula
-    for i in range(len(probabilities)):
-        prediction *= ((1 - probabilities[i]) ** firefly[i])        
-
-    prediction = 1 - prediction
-
-    # return the Root-mean-square deviation
-    return prediction
-
 def dist(a, b):
     S = 0
     for k in range(len(a)):
         S += (a[k] - b[k]) ** 2
     S = math.sqrt(S)
     return S
-
-def rmse(predictions, targets):    
-    return math.sqrt(np.square(np.subtract(targets, predictions)).mean())
