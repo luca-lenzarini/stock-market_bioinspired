@@ -14,7 +14,6 @@ def get_predictions(probabilities: list, expected_value: float):
         algorithm = config[algoritmos[i]]
 
         probabilities_string = '[' + ', '.join([str(elem) for elem in probabilities]) + ']'
-        print(type(probabilities_string))
 
         if algorithm['active'] == 'true':
             module = imp.import_module(algorithm['module'])
