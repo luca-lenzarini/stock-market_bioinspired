@@ -9,6 +9,7 @@ import numpy
 import random
 import time
 from evaluation import get_bayesian_rmse
+from evaluation import bayesian_evaluation
     
 def get_cuckoos(nest,best,lb,ub,n,dim):
     
@@ -159,7 +160,8 @@ def CS(lb,ub,n,N_IterTotal,probabilities,expected_value):
     # # s.objfname=objf.__name__
     # s.bestIndividual=bestnest
 
-    print(bestnest)
+    print(bayesian_evaluation(probabilities, bestnest, expected_value))
+
     return bestnest
     
 
