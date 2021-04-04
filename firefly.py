@@ -8,12 +8,13 @@ import numpy as np
 def lplFirefly(d, n, gamma, alpha, beta, maxGeneration, obj_func):
 
     """"
+    :param d: dimension of the problem
     :param n: number of fireflies in each generation
     :param gamma: absorption coefficient
     :param alpha: step of motion
     :param beta: attractivity factor
     :param maxGeneration: number of max generation
-    :param probabilities: list of probabilities from events
+    :param obj_func: objective function of the problem
     """
      
     
