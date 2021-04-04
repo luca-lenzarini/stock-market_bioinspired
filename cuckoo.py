@@ -8,8 +8,6 @@ import math
 import numpy
 import random
 import time
-from evaluation import get_bayesian_rmse
-from evaluation import bayesian_evaluation
     
 def get_cuckoos(nest,best,lb,ub,n,dim):
     
@@ -34,14 +32,14 @@ def get_cuckoos(nest,best,lb,ub,n,dim):
 
     return tempnest
 
-def get_best_nest(nest,newnest,fitness,n,dim,probabilities,expected_value):
+def get_best_nest(nest,newnest,fitness,n,dim,obj_func):
 # Evaluating all new solutions
     tempnest=numpy.zeros((n,dim))
     tempnest=numpy.copy(nest)
 
     for j in range(0,n):
     #for j=1:size(nest,1),
-        fnew=get_bayesian_rmse(probabilities, newnest[j,:], expected_value)
+        fnew=obj_func(newnest[j,:])
         if fnew<=fitness[j]:
            fitness[j]=fnew
            tempnest[j,:]=newnest[j,:]
@@ -71,25 +69,17 @@ def empty_nests(nest,pa,n,dim):
     return tempnest
 ##########################################################################
 
-def CS(lb,ub,n,N_IterTotal,probabilities,expected_value):
+def CS(dim,n,N_IterTotal,obj_func):
     
-    """"
-    :param lb: lower bound
-    :param ub: uper bound
+    """"    
+    :param dim: dimension of the problem
     :param n: number of cuckoos
     :param N_IterTotal: number of max iteration
-    :param probabilities: list of probabilities 
-    :param expected_value: expected result from probabilities
+    :param obj_func: objective function of the problem
     """
 
-
-    #lb=-1
-    #ub=1
-    #dim=3
-    #n=50
-    #N_IterTotal=1000
-    
-    dim = len(probabilities)
+    lb=0 
+    ub=1
     
     # Discovery rate of alien eggs/solutions
     pa=0.25
@@ -121,7 +111,7 @@ def CS(lb,ub,n,N_IterTotal,probabilities,expected_value):
     timerStart=time.time() 
     # s.startTime=time.strftime("%Y-%m-%d-%H-%M-%S")
     
-    fmin,bestnest,nest,fitness =get_best_nest(nest,new_nest,fitness,n,dim,probabilities,expected_value)
+    fmin,bestnest,nest,fitness =get_best_nest(nest,new_nest,fitness,n,dim,obj_func)
     convergence = [];
     # Main loop counter
     for iter in range (0,N_IterTotal):
@@ -132,14 +122,14 @@ def CS(lb,ub,n,N_IterTotal,probabilities,expected_value):
          
          
          # Evaluate new solutions and find best
-         fnew,best,nest,fitness=get_best_nest(nest,new_nest,fitness,n,dim,probabilities,expected_value)
+         fnew,best,nest,fitness=get_best_nest(nest,new_nest,fitness,n,dim,obj_func)
          
         
          new_nest=empty_nests(new_nest,pa,n,dim) ;
          
         
         # Evaluate new solutions and find best
-         fnew,best,nest,fitness=get_best_nest(nest,new_nest,fitness,n,dim,probabilities,expected_value)
+         fnew,best,nest,fitness=get_best_nest(nest,new_nest,fitness,n,dim,obj_func)
     
          if fnew<fmin:
             fmin=fnew
@@ -149,18 +139,8 @@ def CS(lb,ub,n,N_IterTotal,probabilities,expected_value):
             #print(['At iteration '+ str(iter)+ ' the best fitness is '+ str(fmin)]);
          convergence.append(fmin)
          timerEnd2=time.time()
-        #  s.iterationTime += timerEnd2 - timerStart2
 
-    # timerEnd=time.time()  
-    # s.endTime=time.strftime("%Y-%m-%d-%H-%M-%S")
-    # s.executionTime=timerEnd-timerStart
-    # s.iterationTime = s.iterationTime/N_IterTotal
-    # s.convergence=convergence
-    # s.optimizer="CS"
-    # # s.objfname=objf.__name__
-    # s.bestIndividual=bestnest
 
-    print(bayesian_evaluation(probabilities, bestnest, expected_value))
 
     return bestnest
     

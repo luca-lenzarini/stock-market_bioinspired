@@ -1,21 +1,24 @@
 import math
 import numpy as np
 
-def get_bayesian_rmse(probabilities, exponents, expected_value):
-    return rmse(bayesian_evaluation(probabilities, exponents, expected_value), expected_value)
+class Evaluation:
+    def __init__(self, probabilities, expected_value):
+        self.probabilities = probabilities
+        self.expected_value = expected_value
 
-def rmse(predictions, targets):    
-    return math.sqrt(np.square(np.subtract(targets, predictions)).mean())
+    def get_bayesian_rmse(self, exponents):
+        return self.rmse(self.bayesian_evaluation(exponents))
 
-def bayesian_evaluation(probabilities, exponents, expected_value):
+    def bayesian_evaluation(self, exponents):
 
-    prediction = 1
+        prediction = 1
 
-    # calculates the "inside part" of the formula
-    for i in range(len(probabilities)):
-        prediction *= ((1 - probabilities[i]) ** exponents[i])        
+        for i in range(len(self.probabilities)):
+            prediction *= ((1 - self.probabilities[i]) ** exponents[i])        
 
-    prediction = 1 - prediction
+        prediction = 1 - prediction
 
-    # return the Root-mean-square deviation
-    return prediction
+        return prediction
+
+    def rmse(self, predictions):    
+        return math.sqrt(np.square(np.subtract(self.expected_value, predictions)).mean())

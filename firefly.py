@@ -2,10 +2,10 @@ import random
 import math
 import numpy as np
 
-from evaluation import get_bayesian_rmse 
-from evaluation import bayesian_evaluation
+# from evaluation import get_bayesian_rmse 
+# from evaluation import bayesian_evaluation
 
-def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_value):
+def lplFirefly(d, n, gamma, alpha, beta, maxGeneration, obj_func):
 
     """"
     :param n: number of fireflies in each generation
@@ -16,7 +16,7 @@ def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_val
     :param probabilities: list of probabilities from events
     """
      
-    d = len(probabilities)
+    
     t = 0
     alphat = 1.0
     bests = [0]*d
@@ -42,7 +42,7 @@ def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_val
     # Start iterations
     while t < maxGeneration: 
         for i in range(n):
-            Z[i] = get_bayesian_rmse(probabilities, fireflies[i], expected_value)
+            Z[i] = obj_func(fireflies[i])
 
         indice = np.argsort(Z)
         Z.sort()
@@ -79,7 +79,7 @@ def lplFirefly(n, gamma, alpha, beta, maxGeneration, probabilities, expected_val
 
         t += 1
 
-    print(bayesian_evaluation(probabilities, bests, expected_value))
+    # print(bayesian_evaluation(probabilities, bests, expected_value))
 
     return bests
 
