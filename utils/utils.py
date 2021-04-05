@@ -2,7 +2,7 @@ from configparser import ConfigParser
 import importlib as imp
 import importlib.util
 
-from evaluation import *
+from utils.evaluation import *
 
 def get_predictions(probabilities: list, expected_value: float):
 

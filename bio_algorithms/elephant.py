@@ -1,4 +1,4 @@
-from mealpy.EHO import *
+from bio_algorithms.mealpy.EHO import *
 
 def elephant(dim, max_iterations, alpha, beta, n_clans, obj_func, pop_size):
     lb = [0] * dim

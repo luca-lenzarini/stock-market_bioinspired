@@ -10,7 +10,7 @@
 from numpy.random import uniform
 from numpy import array, mean
 from copy import deepcopy
-from mealpy.root import Root
+from bio_algorithms.mealpy.root import Root
 
 
 class BaseEHO(Root):
