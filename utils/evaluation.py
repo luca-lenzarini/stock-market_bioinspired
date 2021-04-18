@@ -11,14 +11,12 @@ class Evaluation:
 
     def bayesian_evaluation(self, exponents):
 
-        prediction = 1
+        prediction = 0
 
         for i in range(len(self.probabilities)):
-            prediction *= ((1 - self.probabilities[i]) ** exponents[i])        
+            prediction += ((self.probabilities[i]) ** exponents[i])
 
-        prediction = 1 - prediction
-
-        return prediction
+        return prediction / len(self.probabilities)
 
     def rmse(self, predictions):    
         return math.sqrt(np.square(np.subtract(self.expected_value, predictions)).mean())
