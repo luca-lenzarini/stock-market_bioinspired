@@ -14,7 +14,7 @@ class Evaluation:
         prediction = 0
 
         for i in range(len(self.probabilities)):
-            prediction += ((self.probabilities[i]) ** exponents[i])
+            prediction += (self.probabilities[i] ** exponents[i])
 
         return prediction / len(self.probabilities)
 
