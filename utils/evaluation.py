@@ -14,9 +14,14 @@ class Evaluation:
         prediction = 0
 
         for i in range(len(self.probabilities)):
-            prediction += (self.probabilities[i] ** exponents[i])
+            calc = abs(self.probabilities[i]) ** exponents[i]
 
-        return prediction / len(self.probabilities)
+            if self.probabilities[i] < 0:
+                prediction -= calc.real    
+            else:
+                prediction += calc.real
+
+        return ((prediction / len(self.probabilities)) + 1 ) / 2
 
     def rmse(self, predictions):    
         return math.sqrt(np.square(np.subtract(self.expected_value, predictions)).mean())

@@ -90,7 +90,7 @@ def CS(dim,n,N_IterTotal,obj_func):
 #    Ub=[ub]*nd
     convergence=[]
 
-    # RInitialize nests randomely
+    # Initialize nests randomely
     nest=numpy.random.rand(n,dim)*(ub-lb)+lb
        
     
