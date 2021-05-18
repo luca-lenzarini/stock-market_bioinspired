@@ -5,7 +5,7 @@ from datetime import *
 
 from utils.evaluation import *
 
-def get_predictions(probabilities: list, expected_value: float):
+def get_exponents(probabilities: list, expected_value: float):
 
     config = ConfigParser()
     # read config file
@@ -29,15 +29,41 @@ def get_predictions(probabilities: list, expected_value: float):
         
         # verify the active algorithms 
         if algorithm['active'] == 'true':
-            print(algorithm['name'] + ':')
-
             module = imp.import_module(algorithm['module'])
             result = eval('module.' + algorithm['function'] + '(' + algorithm['parameters'] + ')')
 
             results_per_algoritm[algorithm['name']] = result
 
-            print(result)
-            print('\n')
+    return results_per_algoritm
+
+def get_exponent_with_params(probabilities, expected_value, parameters):
+    
+    config = ConfigParser()
+    # read config file
+    config.read('config.ini')
+
+    # get all algorithms in the config file
+    algoritmos = config.sections()
+
+    # set the objective function of the problem
+    function = Evaluation(probabilities, expected_value)
+    obj_func = function.get_bayesian_rmse
+
+    # set the dimension of the probabilities
+    dim = len(probabilities)
+
+    results_per_algoritm = {}
+
+    # execute the algorithms 
+    for i in range(len(algoritmos)):
+        algorithm = config[algoritmos[i]]
+        
+        # verify the active algorithms 
+        if algorithm['active'] == 'true':
+            module = imp.import_module(algorithm['module'])
+            result = eval('module.' + algorithm['function'] + '(' + parameters.get(algorithm['function']) + ')')
+
+            results_per_algoritm[algorithm['name']] = result
 
     return results_per_algoritm
 
@@ -73,6 +99,9 @@ def get_future_date_period(initialDate, finalDate):
 
     new_initialDate = (finalDatetime + timedelta(1)).strftime('%m-%d-%Y')
     new_finalDate = (finalDatetime + timedelta(1) + days_to_add).strftime('%m-%d-%Y')
+
+    print('future_initial', new_initialDate)
+    print('new_finalDate', new_finalDate)
 
     return {
         "initialDate": new_initialDate,

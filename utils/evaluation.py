@@ -25,3 +25,13 @@ class Evaluation:
 
     def rmse(self, predictions):    
         return math.sqrt(np.square(np.subtract(self.expected_value, predictions)).mean())
+
+    def bayesian_evaluation_percentage(self, exponents):
+        result = self.bayesian_evaluation(exponents)
+
+        if result > 0.5:
+            return (result - 0.5) * 2
+        elif result < 0.5: 
+            return  (0.5 - result) * -2
+        else: 
+            return 0

@@ -1,13 +1,14 @@
-from utils.utils import get_predictions
+from utils.utils import get_exponents
 from utils.csvmerger import merge_csv
 from utils.correlation import *
 from datetime import date, datetime
+import json
 
 FILES_PATH = './utils/SM_dataset/'
 SUFFIX = ".csv"
 MERGED_FILE_SEPARATOR = "_x_"
 
-def exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column):
+def exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column, n):
     """"
         :param main_stock: main stock to be correlate with others
         :param stocks_to_correlate: stocks to be correlated with main stock
@@ -38,24 +39,21 @@ def exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column):
                             finalDate, column+'_x', column+'_y')
         
         correlations.append(corr)
-    
-    print("correlations:", correlations)
-    # run bio-inspired algorithms 
-    return get_predictions(correlations, futureCorr)
 
-def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column):
+    exponents = []
+
+    for i in range(n):
+        # run bio-inspired algorithms 
+        current_exponents = get_exponents(correlations, futureCorr)
+        exponents.append(current_exponents)
+
+    return exponents
+
+
+def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column, n):
 
     # get the exponents for each stock 
-    exponents = exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column)
-
-    main_stock_filepath = './utils/SM_dataset/' + main_stock + SUFFIX
-
-    # get the dataframe of the main stock
-    main_stock_dataframe = pd.read_csv(main_stock_filepath, index_col="Data",
-                            dayfirst=True, parse_dates=[0], decimal=',')
-
-    # get the future dataframe
-    future_dataframe = get_future_dataframe(main_stock_dataframe, initialDate, finalDate)
+    exponents = exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column, n)
 
     future_period = get_future_date_period(initialDate, finalDate)
 
@@ -73,8 +71,35 @@ def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column):
 
     eval = Evaluation(future_correlations, 0)
 
-    for i in exponents.keys():
-        print(i, eval.bayesian_evaluation(exponents[i]))
+    results = []
+
+    for i in range(len(exponents)):
+        for j in exponents[i].keys():
+
+            percentage = eval.bayesian_evaluation_percentage(exponents[i].get(j))
+
+            results.append({ j: percentage })
+
+    return results
+
+
+def exec_mult_tests(main_stock, stocks_to_correlate, initialDate, finalDate, column, num_tests):
+
+    results = []
+
+    for i in range(num_tests):
+        # print("==========================================")
+        # print("TEST #{0}".format(i))
+        results.append({"Test #" + str(i): exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column)})
+
+    # for x in results:
+    #     print (x)
+    #     for y in results[x]:
+    #         print (y,':',results[x][y])
+
+    print(json.dumps(results, indent = 4))
+    # print(results)
+        
 
 # helper method to fill full filepath name
 def getFullFilePath(file_name):
