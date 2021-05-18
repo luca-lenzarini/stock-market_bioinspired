@@ -61,7 +61,7 @@ def get_exponent_with_params(probabilities, expected_value, parameters):
         # verify the active algorithms 
         if algorithm['active'] == 'true':
             module = imp.import_module(algorithm['module'])
-            result = eval('module.' + algorithm['function'] + '(' + parameters.get(algorithm['function']) + ')')
+            result = eval('module.' + algorithm['function'] + '(dim, ' + str(parameters.get(algorithm['function']))[1:-1] + ', obj_func)')
 
             results_per_algoritm[algorithm['name']] = result
 
