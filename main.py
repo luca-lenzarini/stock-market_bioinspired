@@ -1,4 +1,4 @@
-from utils.utils import get_exponents
+from utils.utils import get_exponents, get_exponent_with_params
 from utils.csvmerger import merge_csv
 from utils.correlation import *
 from datetime import date, datetime
@@ -22,7 +22,9 @@ def exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column, 
     # set the main stock file path
     main_file_path = getFullFilePath(main_stock)
 
-    futureCorr = getFutureCorrelation(main_file_path, initialDate, finalDate, column)
+    # futureCorr = getFutureCorrelation(main_file_path, initialDate, finalDate, column)
+    futureCorr = 0.412412
+
 
     for i in range(len(stocks_to_correlate)):
         # defines current iteration stock file path
@@ -83,22 +85,30 @@ def exec_train_parameters(main_stock, stocks_to_correlate, initialDate, finalDat
 
     exponents = []
 
-    firefly = {"params": [50, 0.5, 0.1, 50], "steps": [10, 0.2, 0.1, 10]} 
+    firefly = {"params": [50, 0.5, 0.5, 0.1, 50], "steps": [10, 0.2, 0.2, 0.1, 10]} 
     cuckoo = {"params": [50,50], "steps": [10, 10]}
     bat = {"params": [1,50], "steps": [1, 10]}
     elephant = {"params": [50, 0.5, 0.5, 5, 50], "steps": [10, 0.1, 0.1, 5, 50]} 
 
     for i in range(n):
-        algorithm_params = {"lplfirefly": firefly["params"], "CS": cuckoo["params"], "BAT": bat["params"], "elephant": elephant["params"]}
+        algorithm_params = {"lplFirefly": firefly["params"], "CS": cuckoo["params"], "BAT": bat["params"], "elephant": elephant["params"]}
 
         # run bio-inspired algorithms 
-        current_exponents = get_exponents(correlations, futureCorr)
+        current_exponents = get_exponent_with_params(correlations, futureCorr, algorithm_params)
         exponents.append(current_exponents)
 
-        firefly["params"] = np.sum([firefly["params"], firefly["steps"]], axis=0)
-        cuckoo["params"] = np.sum([cuckoo["params"], cuckoo["steps"]], axis=0)
-        bat["params"] = np.sum([bat["params"], bat["steps"]], axis=0)
-        elephant["params"] = np.sum([elephant["params"], elephant["steps"]], axis=0)
+        for a in range(len(firefly["params"])):
+            firefly["params"][a] += firefly["steps"][a]
+            elephant["params"][a] += elephant["steps"][a]
+
+        for a in range(len(cuckoo["params"])):
+            cuckoo["params"][a] += cuckoo["steps"][a]
+            bat["params"][a] += bat["steps"][a]
+
+        # firefly["params"] = np.sum([firefly["params"], firefly["steps"]], axis=0)
+        # cuckoo["params"] = np.sum([cuckoo["params"], cuckoo["steps"]], axis=0)
+        # bat["params"] = np.sum([bat["params"], bat["steps"]], axis=0)
+        # elephant["params"] = np.sum([elephant["params"], elephant["steps"]], axis=0)
 
     return exponents
 
@@ -124,35 +134,21 @@ def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column, n
 
     eval = Evaluation(future_correlations, 0)
 
-    results = []
+    results = {}
 
     for i in range(len(exponents)):
         for j in exponents[i].keys():
 
             percentage = eval.bayesian_evaluation_percentage(exponents[i].get(j))
 
-            results.append({ j: percentage })
+            if results.get(j) == None:
+                results[j] = [percentage]
+            else:
+                results[j].append(percentage)
+
+            # results.append({ j: percentage })
 
     return results
-
-
-def exec_mult_tests(main_stock, stocks_to_correlate, initialDate, finalDate, column, num_tests):
-
-    results = []
-
-    for i in range(num_tests):
-        # print("==========================================")
-        # print("TEST #{0}".format(i))
-        results.append({"Test #" + str(i): exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column)})
-
-    # for x in results:
-    #     print (x)
-    #     for y in results[x]:
-    #         print (y,':',results[x][y])
-
-    print(json.dumps(results, indent = 4))
-    # print(results)
-        
 
 # helper method to fill full filepath name
 def getFullFilePath(file_name):
