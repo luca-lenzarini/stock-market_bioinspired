@@ -71,7 +71,7 @@ def get_exponent_with_params(probabilities, expected_value, parameters):
 def get_future_dataframe(dataframe, initialDate, finalDate):
     
     # filters the period
-    period = dataframe.loc[finalDate:initialDate]
+    period = dataframe.loc[finalDate:initialDate] 
 
     # gets the size of the filtered period
     num_rows = len(period)
@@ -80,17 +80,17 @@ def get_future_dataframe(dataframe, initialDate, finalDate):
     # search for the last element of filtered period 
     for row in dataframe.itertuples():
         # if the indexes are the same, stop the iteration
-        if(row[0] == period.index[num_rows - 1]):
+        if(row[0] == period.index[0]):
             break
 
         i += 1
 
     # start row is the next row after period
-    start_row = i + 1
-    end_row = start_row + num_rows
+    start_row = i - 1
+    end_row = start_row - num_rows
 
     # filters the future period by the indexes
-    return dataframe.iloc[start_row:end_row, :]
+    return dataframe.iloc[end_row:start_row, :]
 
 def get_future_date_period(initialDate, finalDate):
     initialDatetime = datetime.strptime(initialDate, '%m-%d-%Y')
@@ -100,9 +100,6 @@ def get_future_date_period(initialDate, finalDate):
 
     new_initialDate = (finalDatetime + timedelta(1)).strftime('%m-%d-%Y')
     new_finalDate = (finalDatetime + timedelta(1) + days_to_add).strftime('%m-%d-%Y')
-
-    print('future_initial', new_initialDate)
-    print('new_finalDate', new_finalDate)
 
     return {
         "initialDate": new_initialDate,

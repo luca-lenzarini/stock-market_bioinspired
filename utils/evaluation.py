@@ -1,13 +1,21 @@
 import math
 import numpy as np
+from sklearn.metrics import mean_squared_error, mean_squared_log_error, mean_absolute_error
 
 class Evaluation:
     def __init__(self, probabilities, expected_value):
         self.probabilities = probabilities
+
+        expected_value += 1
+
+        if expected_value != 0:
+            expected_value = expected_value / 2
+        
         self.expected_value = expected_value
 
-    def get_bayesian_rmse(self, exponents):
-        return self.rmse(self.bayesian_evaluation(exponents))
+    def get_bayesian_rmse(self, exponents):     
+        rmse = self.rmse(self.bayesian_evaluation(exponents))
+        return rmse
 
     def bayesian_evaluation(self, exponents):
 

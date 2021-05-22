@@ -22,8 +22,8 @@ def exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column, 
     # set the main stock file path
     main_file_path = getFullFilePath(main_stock)
 
-    # futureCorr = getFutureCorrelation(main_file_path, initialDate, finalDate, column)
-    futureCorr = 0.412412
+    futureCorr = getFutureCorrelation(main_file_path, initialDate, finalDate, column)
+    # futureCorr = 0.412412
 
 
     for i in range(len(stocks_to_correlate)):
@@ -85,7 +85,7 @@ def exec_train_parameters(main_stock, stocks_to_correlate, initialDate, finalDat
 
     exponents = []
 
-    firefly = {"params": [50, 0.5, 0.5, 0.1, 50], "steps": [10, 0.2, 0.2, 0.1, 10]} 
+    firefly = {"params": [1, 0.8, 0.8, 0.5, 1], "steps": [1, 0.2, 0.2, 0.1, 1]} 
     cuckoo = {"params": [50,50], "steps": [10, 10]}
     bat = {"params": [1,50], "steps": [1, 10]}
     elephant = {"params": [50, 0.5, 0.5, 5, 50], "steps": [10, 0.1, 0.1, 5, 50]} 
@@ -116,7 +116,7 @@ def exec_train_parameters(main_stock, stocks_to_correlate, initialDate, finalDat
 def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column, n):
 
     # get the exponents for each stock 
-    exponents = exec_train_parameters(main_stock, stocks_to_correlate, initialDate, finalDate, column, n)
+    exponents = exec_train(main_stock, stocks_to_correlate, initialDate, finalDate, column, n)
 
     future_period = get_future_date_period(initialDate, finalDate)
 
