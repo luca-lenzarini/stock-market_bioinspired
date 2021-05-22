@@ -134,7 +134,14 @@ def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column, n
 
     eval = Evaluation(future_correlations, 0)
 
-    results = {}
+    futureCorrelation = getFutureCorrelation(getFullFilePath(main_stock), initialDate, finalDate, column)
+
+    final_result = 0
+
+    if(futureCorrelation > 0.5):
+        final_result = 1
+    
+    results = {"result": [final_result]*n}
 
     for i in range(len(exponents)):
         for j in exponents[i].keys():
