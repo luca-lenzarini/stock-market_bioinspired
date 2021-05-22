@@ -28,10 +28,12 @@ def getFutureCorrelation(filepath, initialDate, finalDate, column):
     # calculate the final correlation
     final_correlation = np.corrcoef(period[column], future_period[column])[0][1]
 
-    first_value = future_period.head(1)
-    last_value = future_period.tail(1)
+    first_value = future_period[column].tail(1).values
+    last_value = future_period[column].head(1).values
     
-    first_value.reset_index(drop=True)
-    last_value.reset_index(drop=True)
-    
+    if (final_correlation < 0 and first_value < last_value) or final_correlation > 0 and last_value < first_value:
+        final_correlation = final_correlation * (-1)
+
+    print(final_correlation)
+
     return final_correlation

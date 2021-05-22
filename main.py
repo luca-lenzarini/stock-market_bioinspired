@@ -139,7 +139,7 @@ def exec_test(main_stock, stocks_to_correlate, initialDate, finalDate, column, n
     for i in range(len(exponents)):
         for j in exponents[i].keys():
 
-            percentage = eval.bayesian_evaluation_percentage(exponents[i].get(j))
+            percentage = eval.bayesian_evaluation(exponents[i].get(j))
 
             if results.get(j) == None:
                 results[j] = [percentage]

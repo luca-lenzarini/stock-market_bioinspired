@@ -11,6 +11,7 @@ class Evaluation:
         if expected_value != 0:
             expected_value = expected_value / 2
         
+        print(expected_value)
         self.expected_value = expected_value
 
     def get_bayesian_rmse(self, exponents):     
